@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Examples</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <script src="https://img.highcharts.com.cn/jquery/jquery.min.js"></script>
+    <script src="https://img.highcharts.com.cn/highcharts/highcharts.js"></script>
+    <script src="https://img.highcharts.com.cn/highcharts/modules/exporting.js"></script>
+    <script src="https://img.highcharts.com.cn/highcharts/modules/data.js"></script>
+    <script src="https://img.highcharts.com.cn/highcharts/modules/series-label.js"></script>
+    <script src="https://img.highcharts.com.cn/highcharts/modules/oldie.js"></script>
+    <script src="https://img.highcharts.com.cn/highcharts-plugins/highcharts-zh_CN.js"></script>
+    <link rel="stylesheet" href="/js/bootstrap-datetimepicker/css/bootstrap-datetimepicker.css">
+    <link rel="stylesheet" href="/js/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css">
+    <script type="text/javascript"  src="/js/bootstrap-table/bootstrap-table.min.js"></script>
+</head>
+<body>
+<div>
+    <form class="form-inline" style="margin-top: 30px;margin-left:170px ">
+        <label for="settlementStatus">统计周期</label>
+        <select id="settlementStatus" class="form-control" onchange="selectCount(this.value)">
+            <option value="0">本月统计</option>
+            <option value="7">最近一周</option>
+            <option value="30">最近30天</option>/
+            <option value="-1">自定义</option>
+        </select>
+        <input type="hidden" class="form-control" id="startDate" placeholder="开始日期" >
+        <input type="hidden" class="form-control" id="endDate" placeholder="结束日期" >
+        <input type="hidden" class="form-control" onclick="search()"  id="searchButton" value ="查询" >
+    </form>
+</div>
+
+<div id="container" style="min-width:400px;height:400px">
+
+</div>
+<div class="message"></div>
+<script type="text/javascript">
+    Highcharts.setOptions({ global: { useUTC: false } });
+    // 获取 CSV 数据并初始化图表
+    $(document).ready(function() {
+
+        selectCount(0);
+
+    });
+    function search(){
+        orderCountArr=[];
+        orderDate=[];
+        successCountarr=[];
+        successDate=[];
+        dateArr=[];
+        $.ajax({
+            url:'/Settlement/querySatement',
+            data:{selectCountStatus:$("#settlementStatus").val(),
+                startDate:$("#startDate").val(),
+                endDate:$("#endDate").val()},
+            type:'GET',
+            async:false,
+            success:function(data){
+                for (var i = 0; i < data.Orderlist.length; i++) {
+                    orderCountArr.push(data.Orderlist[i].orderCount);
+                    successCountarr.push(data.Orderlist[i].successCount);
+                    orderDate.push(data.Orderlist[i].orderDate)
+                }
+
+                // for (var i = 0; i < data.Successlist.length; i++) {
+                // 	successCountarr.push(data.Successlist[i].successCount);
+                // 	successDate.push(data.Successlist[i].successDate);
+                //     }
+
+
+                var title = {
+                    text: '统计图'
+                };
+                var subtitle = {
+                    text: '   --张少飞'
+                };
+                var xAxis = {
+                    // tickInterval: 2 * 24 * 3600 * 1000, // 坐标轴刻度间隔为两天
+                    categories: orderDate
+                };
+                var yAxis = {
+                    title: {
+                        text: 'Count(单)'
+                    },
+                    plotLines: [{
+                        value: 0,
+                        width: 1,
+                        color: '#808080'
+                    }]
+                };
+
+                var tooltip = {
+                    valueSuffix: '单'
+                };
+
+                var legend = {
+                    layout: 'horizontal',
+                    align: 'center',
+                    verticalAlign: 'top',
+                    borderWidth: 0
+                };
+
+                var series =  [
+                    {
+                        name: '订单量',
+                        data: orderCountArr
+                    },
+                    {
+                        name: '总成交量',
+                        data: successCountarr
+                    }
+                ];
+
+                var json = {};
+
+                json.title = title;
+                json.subtitle = subtitle;
+                json.xAxis = xAxis;
+                json.yAxis = yAxis;
+                json.tooltip = tooltip;
+                json.legend = legend;
+                json.series = series;
+
+                $('#container').highcharts(json);
+            }
+        })
+        $("#startDate").prop("type","hidden");
+        $("#endDate").prop("type","hidden");
+        $("#searchButton").prop("type","hidden");
+    }
+    function show(){
+        if ($("#settlementStatus").val()==-1) {
+            $("#startDate").prop("type","date");
+            $("#endDate").prop("type","date");
+            $("#searchButton").prop("type","button");
+            return ;
+        }
+        if ($("#settlementStatus").val()!=-1) {
+            $("#startDate").prop("type","hidden");
+            $("#endDate").prop("type","hidden");
+            $("#searchButton").prop("type","hidden");
+        }
+    }
+    function selectCount(selectCountStatus){
+        if ($("#settlementStatus").val()==-1) {
+            $("#startDate").prop("type","date");
+            $("#endDate").prop("type","date");
+            $("#searchButton").prop("type","button");
+            return ;
+        }
+        if ($("#settlementStatus").val()!=-1) {
+            $("#startDate").prop("type","hidden");
+            $("#endDate").prop("type","hidden");
+            $("#searchButton").prop("type","hidden");
+        }
+        orderCountArr=[];
+        orderDate=[];
+        successCountarr=[];
+        successDate=[];
+        dateArr=[];
+        $.ajax({
+            url:'/Settlement/querySatement',
+            data:{selectCountStatus:$("#settlementStatus").val(),
+                startDate:$("#startDate").val(),
+                endDate:$("#endDate").val()},
+            type:'GET',
+            async:false,
+            success:function(data){
+                for (var i = 0; i < data.Orderlist.length; i++) {
+                    orderCountArr.push(data.Orderlist[i].orderCount);
+                    successCountarr.push(data.Orderlist[i].successCount);
+                    orderDate.push(data.Orderlist[i].orderDate)
+                }
+
+                // for (var i = 0; i < data.Successlist.length; i++) {
+                // 	successCountarr.push(data.Successlist[i].successCount);
+                // 	successDate.push(data.Successlist[i].successDate);
+                //     }
+
+
+                var title = {
+                    text: '统计图'
+                };
+                var subtitle = {
+                    text: '   --我是好人'
+                };
+                var xAxis = {
+                    // tickInterval: 2 * 24 * 3600 * 1000, // 坐标轴刻度间隔为两天
+                    categories: orderDate
+                };
+                var yAxis = {
+                    title: {
+                        text: 'Count(单)'
+                    },
+                    plotLines: [{
+                        value: 0,
+                        width: 1,
+                        color: '#808080'
+                    }]
+                };
+
+                var tooltip = {
+                    valueSuffix: '单'
+                };
+
+                var legend = {
+                    layout: 'horizontal',
+                    align: 'center',
+                    verticalAlign: 'top',
+                    borderWidth: 0
+                };
+
+                var series =  [
+                    {
+                        name: '订单量',
+                        data: orderCountArr
+                    },
+                    {
+                        name: '总成交量',
+                        data: successCountarr
+                    }
+                ];
+                var chart={
+                    type: 'line'
+                };
+                var json = {};
+
+                json.title = title;
+                json.subtitle = subtitle;
+                json.xAxis = xAxis;
+                json.yAxis = yAxis;
+                json.tooltip = tooltip;
+                json.legend = legend;
+                json.series = series;
+                json.chart = chart;
+                $('#container').highcharts(json);
+            }
+        })
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!-- 引入juquery -->
+    <script type="text/javascript" src="/js/jquery-easyui-1.5/jquery.min.js"></script>
+    <!-- 引入bootstrap的css、js -->
+    <link rel="stylesheet" href="/js/bootstrap3/css/bootstrap.css">
+    <script type="text/javascript" src="/js/bootstrap3/js/bootstrap.js"></script>
+    <!-- 引入tree的js、css -->
+    <link rel="stylesheet" href="/js/bootstrap-treeview/bootstrap-treeview.min.css">
+    <script type="text/javascript" src="/js/bootstrap-treeview/bootstrap-treeview.min.js"></script>
+    <!-- 引入选项卡的js、css -->
+    <link rel="stylesheet" href="/js/bootStrap-addTabs/bootstrap.addtabs.css">
+    <script type="text/javascript" src="/js/bootStrap-addTabs/bootstrap.addtabs.min.js"></script>
+</head>
+<style>
+    .myrow {
+        margin-bottom: 100px
+    }
+</style>
+<body>
+<!-- 导航条  inverse是黑色-->
+<nav class="navbar navbar-inverse">
+    <!-- 支持响应式布局的容器 -->
+    <div class="container-fluid">
+        <!-- navbar-heade位于左侧 -->
+        <div class="navbar-heade">
+            <!--navbar-brand 设置导航条组件内的品牌图标 -->
+            <a class="navbar-brand" href="#">金科教育</a>
+
+        </div>
+        <!-- navbar-right位于右侧 -->
+        <div class="navbar-right">
+            <!--navbar-brand 设置导航条组件内的品牌图标 -->
+            <a class="navbar-brand" href="#">张少飞</a>
+        </div>
+    </div>
+</nav>
+<!-- 支持响应式布局的容器 -->
+<div class="container-fluid">
+    <!-- 栅格系统 -->
+    <div class="row myrow">
+        <div class="col-md-2">
+            <!-- 树 -->
+            <div id="myTree">
+
+            </div>
+        </div>
+        <div class="col-md-10">
+            <!-- 选项卡 -->
+            <div class="myYabls" id="tablist">
+                <!-- 新选项卡 死格式 -->
+                <ul class="nav nav-tabs">
+                    <li role="presentation" class="active">
+                        <a href="#home" role="tab" data-toggle="tab">欢迎</a>
+                    </li>
+                </ul>
+
+                <!-- 首页选项卡下内容 -->
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane active" id="home">
+                        首页
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+<script type="text/javascript">
+    //初始化
+    $(function () {
+
+        initTree();
+
+    })
+
+    //初始化树queryTree
+    function initTree() {
+        $.ajax({
+            url: "/tree/queryTree",
+            type: "post",
+            success: function (data) {
+
+                $('#myTree').treeview({
+                    data: data,
+                    onNodeSelected: function (event, node) {
+                        $.addtabs({iframeHeight: 550});
+                        $.addtabs.add({
+                            id: node.id,
+                            title: node.text,
+                            url: node.href
+                        });
+                    }
+                })
+            }
+        })
+    }
+
+
+</script>
+</html>

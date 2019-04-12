@@ -1,0 +1,21 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: springcloud-feigns
+  datasource:
+    thymeleaf:
+      encoding: UTF-8
+      servlet:
+        content-type: text/html
+ribbon:
+  eureka:
+    enabled: true
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8088/eureka/
+feign:
+  hystrix:
+    enabled: true  #熔断器

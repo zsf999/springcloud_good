@@ -1,0 +1,2 @@
+/* channel-shouji/5.0.0 nav.js Date:2018-12-25 20:19:00 */
+define("//misc.360buyimg.com/channel/shouji/5.0.0/widget/nav/nav.js",[],function(require,a,b){a.init=function(a){a.imgWebp({useWebp:!1,Quality:95})}});

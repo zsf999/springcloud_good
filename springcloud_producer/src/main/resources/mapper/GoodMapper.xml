@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.jk.mapper.GoodMapper">
+
+    <select id="querysum" resultType="int">
+         select count(1) from t_good
+    </select>
+    <select id="queryGood" resultType="com.jk.pojo.Good">
+         select * FROM t_good g left join t_goodbrand b
+                on g.goodBrandId=b.goodBrandId
+                left join t_goodtype t on g.goodTypeId=t.goodTypeId limit #{st},#{end}
+     </select>
+    <insert id="addGood">
+insert into t_good(goodName,goodprice,goodImg,goodTypeId,goodBrandId) values(#{goodName},#{goodprice},#{goodImg},#{goodTypeId},#{goodBrandId})
+    </insert>
+    <delete id="deleteGood">
+        delete from  t_good where goodId in (${_parameter})
+    </delete>
+    <select id="queryGoodById" resultType="com.jk.pojo.Good">
+        select * from t_good where goodId=#{id}
+    </select>
+    <update id="updateGood">
+        update t_good set goodName=#{goodName},goodprice=#{goodprice},goodImg=#{goodImg},goodTypeId=#{goodTypeId},goodBrandId=#{goodBrandId} where goodId=#{goodId}
+    </update>
+    <select id="queryGoodTypellist" resultType="com.jk.pojo.GoodType">
+        select * from t_goodtype
+    </select>
+</mapper>
